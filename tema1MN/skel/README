@@ -1,0 +1,116 @@
+Saceleanu Andrei Iulian 311CB
+
+Tema 1 MN
+
+Part-1 
+
+1.Generate probabilities
+S-a construit o matrice inferior triunghiulara X care contine toate elementele de
+la 1 la n*(n+1)/2,fiind utilizata pentru a avea acces rapid la vecinii unui numar
+din asezarea labirint data.
+Matricea rezultat A este completata rand cu rand.In functie de indexul randului,
+se asociaza intersectia corespunzatoare din labirint si,in functie de pozitia
+acesteia(varfurile triunghiului,laturi fara varfuri sau interior),pe diagonala lui
+A avem 4,5,6 respectiv,si -1 in dreptul coloanelor de index asociat vecinilor 
+intersectiei curente.
+
+2.Jacobi factorization
+Se construieste matricea de iteratie si vectorul de iteratie conform teoriei.
+
+3.Matrix_to_csr
+Se traverseaza matricea in forma densa.
+Cand se intalneste un element nenul,este adaugat la vectorul values,indicele de
+coloana curent la columns si,daca pe acel rand nu a mai fost vazut niciun element
+nenul,indexul curent din values se adauga in rowptr.
+La trecerea pe un nou rand,flagul seen se reseteaza.
+
+4.Jacobi sparse
+Se calculeaza iterativ solutia aproximativa a sistemului pana cand diferenta
+rezultatului la 2 iteratii consecutive nu mai depaseste o toleranta tol
+
+
+Part-2
+
+1.Centroid checking
+
+Se initializeaza fiecare cluster cu acele puncte mod NC=i,cu i de la 1 la NC
+Centroidul fiecarui cluster se initializeaza ca media(mean) acestor puncte sau cu
+unicul punct daca relatia de congruenta modulo este verificata o singura data.
+Cat timp centroizii de la pasi consecutivi difera in norma mai mult de 1e-5,
+acestia se recalculeaza.
+Pentru fiecare punct,se creeaza un vector de distante pana la fiecare centroid
+iar apoi se retine indexul clusterului care este cel mai apropiat.
+Noii centroizi reprezinta media punctelor care au fost impartite fiecaruia,sau
+punctul in speta daca multimea logica indexes==i are un singur element nenul.
+
+2.Cost computing
+
+Odata calculati centroizii,se refoloseste acelasi vector de distante,nu se mai
+retine indexul clusterului cel mai apropiat,ci distanta pana la acesta.
+Ulterior se sumeaza toate aceste distante minime.
+
+
+Part-3
+
+1.RGB Histogram
+Se citeste imaginea,se separa fiecare canal r,g si b.
+Se formeaza vectorul de margini pentru componentele histogramei.
+Rezultatul pentru fiecare canal se concateneaza in solutia finala a functiei.
+
+2.HSV Histogram
+Se procedeaza similar cu RGB Histogram.In prealabil se converteste imaginea RGB
+la HSV cu ajutorul functiei converteste,implementare vectorizata a algoritmului
+propus.
+
+3.Cat Prediction
+
+Preprocess
+
+Pentru fiecare imagine din dataset,se creeaza histograma de tip corespunzator si
+cu count_bins furnizat,aceasta fiind stocata intr-un rand al matricei X.
+Vectorul y este completat cu 1 pentru imaginile provenite din directorul cats si
+cu -1 pentru cele din not_cats
+
+Learn
+
+Se rezolva sistemul X_tilda*w=y;
+X_tilda,compus din X si o coloana bias de 1,este descompusa ortogonal,solutia
+w fiind aflata dupa rezolvarea SST Rw=Q'*y
+
+Evaluate
+
+Pentru fiecare imagine din testset,se obtine histograma corespunzatoare,se
+completeaza cu bias 1 si se calculeaza w*[histogram 1].
+Contorul de predictii corecte se incrementeaza daca pentru imagini de test din cats
+s-a obtinut o valoare pozitiva iar pentru cele din not_cats,una negativa.
+Percentage se obtine ca raportul dintre valoarea finala a contorului si numarul 
+de imagini de test.
+
+Part-4
+
+Mini-batch Gradient Descent
+
+Learn
+
+Coloanele matricei de histograme X sunt scalate,cu exceptia celei de bias
+w se initializeaza cu valori random din intervalul [-0.1,0.1];
+La fiecare iteratie(epoch),se actualizeaza w,incercandu-se a se minimiza functia de
+cost propusa.
+
+Evaluate
+
+Similar cu evaluate de la partea 3.
+Diferenta reiese din evaluarea predictiilor,produsul dintre w si histograma de la
+part 3 devenind un produs dintre w si matricea intreaga X_rond=X_tilda.
+Primele n1 componente din pred sunt predictiile pentru imaginile cats/ ,astfel se
+numara elementele pozitive din aceasta sectiune nnz(pred(1:n1)>=0),respectiv cele
+negative din urmatoarea.
+
+
+
+*Dificultati
+-identificarea solutiilor vectorizate pentru a respecta restrictiile de timp
+-intelegerea formularilor din anumite cerinte,probabil
+data de confuzia cu alte implementari
+(ex. in unele implementari initializarea centroizilor in k-means se face cu
+puncte din cele furnizate);
